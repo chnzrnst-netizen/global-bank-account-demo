@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GLOBAL BANK ACCOUNT</title>
+<style>
+:root{color-scheme:dark;font-family:Arial,sans-serif}
+*{box-sizing:border-box} body{margin:0;background:#071225;color:#f4f7ff;padding:18px}
+.wrap{max-width:520px;margin:auto}.notice{background:#3a2b08;color:#ffe39a;border:1px solid #9b741b;padding:12px;border-radius:12px;font-weight:700;text-align:center;font-size:13px}
+header{display:flex;align-items:center;gap:12px;margin:22px 0}.logo{background:#1261ee;border-radius:50%;width:48px;height:48px;display:grid;place-items:center;font-size:25px}
+h1{font-size:23px;margin:0} .sub{color:#a9b8d5;font-size:13px;margin-top:4px}
+.card{background:linear-gradient(135deg,#0861f5,#0737a5);padding:22px;border-radius:22px;margin:18px 0;box-shadow:0 12px 30px #0005}
+.small{font-size:14px;color:#d7e5ff}.balance{font-size:clamp(34px,10vw,48px);font-weight:800;margin:10px 0}.acct{font-size:13px;color:#d7e5ff}
+.actions{display:flex;gap:9px;margin-top:22px}.actions button,button{border:0;border-radius:12px;padding:12px 14px;background:#174caa;color:white;font-weight:700;cursor:pointer}
+.actions button{flex:1;background:#ffffff20;border:1px solid #ffffff35}
+h2{font-size:19px;margin:24px 0 12px}.txn{background:#111f36;padding:15px;border-radius:13px;margin:9px 0;display:flex;justify-content:space-between;gap:10px}
+.muted{color:#9eb0d0;font-size:13px;margin-top:5px}.pending{color:#ffcf4a;font-weight:800;font-size:12px}.credit{color:#30df9a}.debit{color:#f5f7ff}
+.panel{background:#101e35;padding:16px;border-radius:16px;margin-top:18px}label{display:block;font-size:13px;color:#b8c7e2;margin:12px 0 6px}input{width:100%;padding:12px;border-radius:10px;border:1px solid #405273;background:#08152a;color:white}
+button.primary{background:#1261ee;width:100%;margin-top:12px}.foot{font-size:12px;color:#9eb0d0;line-height:1.5;margin:18px 2px}
+#app{display:none}
+</style>
+</head>
+<body><div class="wrap">
+<div class="notice">GLOBAL BANK · SIMULATED ACCOUNT</div>
+<section id="login" class="panel">
+<header><div class="logo">◎</div><div><h1>GLOBAL BANK ACCOUNT</h1><div class="sub">Personal banking dashboard</div></div></header>
+<p class="small">Enter an email and password for this local simulator. Do not use a real banking password.</p>
+<label>Email</label><input id="email" type="email" placeholder="name@example.com">
+<label>Password</label><input id="password" type="password" placeholder="Enter password">
+<button class="primary" onclick="login()">Login</button>
+</section>
+<section id="app">
+<header><div class="logo">◎</div><div><h1>GLOBAL BANK ACCOUNT</h1><div class="sub">Account profile · <span id="profile"></span></div></div></header>
+<div class="card"><div class="small">Available balance</div><div class="balance" id="balance">$500,000.00</div><div class="acct">Account: GB-••••-0001</div>
+<div class="actions"><button onclick="document.getElementById('recipient').focus()">Transfer</button><button onclick="alert('This simulated account cannot receive real funds.')">Receive</button></div></div>
+<h2>Transfers</h2>
+<div class="panel">
+<label>Recipient bank</label><input id="bank" placeholder="Bank name">
+<label>Recipient name</label><input id="recipient" placeholder="Account holder name">
+<label>Amount (USD)</label><input id="amount" type="number" min="1" step="0.01" placeholder="250.00">
+<button class="primary" onclick="transfer()">Submit simulated transfer</button>
+</div>
+<h2>Recent transactions</h2><div id="transactions"></div>
+<p class="foot">SIMULATED ACCOUNT · Balances and transactions are fictional. No funds move and no payment is sent.</p>
+</section>
+</div>
+<script>
+let balance=500000;
+let tx=[{name:"Salary credit (simulated)",amount:500000,status:"SIMULATED CREDIT",credit:true},{name:"Sample transfer",amount:250000,status:"PENDING · SIMULATED",credit:false}];
+function login(){const e=document.getElementById('email').value.trim(),p=document.getElementById('password').value;if(!e||!p){alert('Enter an email and password.');return;}document.getElementById('profile').textContent=e;document.getElementById('login').style.display='none';document.getElementById('app').style.display='block';render();}
+function transfer(){const bank=document.getElementById('bank').value.trim()||'Sample Bank',to=document.getElementById('recipient').value.trim()||'Sample recipient',a=Number(document.getElementById('amount').value);if(!Number.isFinite(a)||a<=0){alert('Enter a valid demo amount.');return;}tx.unshift({name:'Simulated transfer to '+to+' · '+bank,amount:a,status:'PENDING · SIMULATED',credit:false});render();document.getElementById('amount').value='';}
+function render(){document.getElementById('balance').textContent='$'+balance.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});document.getElementById('transactions').innerHTML=tx.map(t=>`<div class="txn"><div><strong>${esc(t.name)}</strong><div class="muted">${t.status}</div></div><div class="${t.credit?'credit':'debit'}">${t.credit?'+':'−'}$${t.amount.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</div></div>`).join('');}
+function esc(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+</script>
+</body></html>
